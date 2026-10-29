@@ -1,0 +1,13 @@
+  .img-col {
+    max-width: 90px;
+  }
+  
+  .desc-col {
+    max-width: 200px;
+  }
+
+  .img-menu {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+  }
