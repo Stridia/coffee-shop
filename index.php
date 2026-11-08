@@ -36,7 +36,7 @@ include 'navbar.php';
                     </p>
                     <a href="menu.php" class="btn btn-info btn-sm">Menu</a>
                     <?php if (is_admin()): ?>
-                    <a href="manage_menu.php" class="btn btn-info btn-sm">Manage Menu</a>
+                    <a href="admin/index.php" class="btn btn-info btn-sm">Manage Menu</a>
                     <?php endif;?>
                 </div>
             </div>

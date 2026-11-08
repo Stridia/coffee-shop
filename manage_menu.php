@@ -7,9 +7,8 @@ require_admin();
 
 include 'navbar.php';
 
-$query = "SELECT * FROM menu";
-
-$result = mysqli_query($conn, "$query");
+$result = mysqli_query($conn, 
+          "SELECT p.id, ");
 ?>
 
 <!DOCTYPE html>
