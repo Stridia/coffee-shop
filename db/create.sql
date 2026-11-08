@@ -1,6 +1,6 @@
 -- Table: cafe
 CREATE TABLE cafe (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     name varchar(64)  NOT NULL,
     address varchar(256)  NOT NULL,
     contact_number varchar(16)  NOT NULL,
@@ -9,26 +9,26 @@ CREATE TABLE cafe (
 
 -- Table: roles
 CREATE TABLE roles (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     name varchar(16)  NOT NULL,
     CONSTRAINT roles_pk PRIMARY KEY (id)
 );
 
 -- Table: types
 CREATE TABLE types (
-    id int NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     name varchar(16) NOT NULL,
     CONSTRAINT types_pk PRIMARY KEY (id)
 );
 
 -- Table: users
 CREATE TABLE users (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     role_id int  NOT NULL,
     username varchar(64)  NOT NULL,
     password varchar(256)  NOT NULL,
     email varchar(64)  NOT NULL,
-    created_at datetime  NOT NULL,
+    created_at datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT users_pk PRIMARY KEY (id),
     CONSTRAINT users_roles_fk FOREIGN KEY (role_id)
         REFERENCES roles (id)
@@ -36,7 +36,7 @@ CREATE TABLE users (
 
 -- Table: products
 CREATE TABLE products (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     cafe_id int  NOT NULL,
     type_id int NOT NULL,
     name varchar(64)  NOT NULL,
@@ -66,9 +66,9 @@ CREATE TABLE carts (
 
 -- Table: orders
 CREATE TABLE orders (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     user_id int  NOT NULL,
-    order_date datetime  NOT NULL,
+    order_date datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total_items int  NOT NULL,
     total_price int  NOT NULL,
     status ENUM('processing', 'delayed', 'ready', 'cancelled', 'completed') 
@@ -80,7 +80,7 @@ CREATE TABLE orders (
 
 -- Table: order_details
 CREATE TABLE order_details (
-    id int  NOT NULL,
+    id int  NOT NULL AUTO_INCREMENT,
     order_id int  NOT NULL,
     product_id int  NOT NULL,
     quantity int  NOT NULL,
