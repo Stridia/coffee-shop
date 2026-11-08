@@ -11,7 +11,7 @@ function is_signin() {
 }
 
 function is_admin() {
-    return $_SESSION['role'] === 'admin';
+    return $_SESSION['role'] === 'owner';
 }
 
 function is_customer() {
