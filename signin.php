@@ -1,11 +1,11 @@
 <?php
-// login.php
+// signin.php
 session_start();
 include 'config.php';
 
 $error = "";
 
-if (isset($_POST['login'])) {
+if (isset($_POST['signin'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
@@ -33,7 +33,7 @@ if (isset($_POST['login'])) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login</title>
+        <title>Sign In</title>
         <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
         rel="stylesheet">
@@ -45,7 +45,7 @@ if (isset($_POST['login'])) {
                 <div class="col-md-4">
                     <div class="card shadow-sm">
                         <div class="card-header bg-dark text-white text-center">
-                            <h5 class="mb-0">Login ke Coffee Shop</h5>
+                            <h5 class="mb-0">Sign In</h5>
                         </div>
                         <div class="card-body">
                             <?php if ($error): ?>
@@ -61,7 +61,7 @@ if (isset($_POST['login'])) {
                                         <input type="password" class="form-control" id="password" name="password" required>
                                     </div>
                                     <div class="d-grid">
-                                        <button type="submit" name="login" class="btn btndark">Login</button>
+                                        <button type="submit" name="signin" class="btn btndark">Sign In</button>
                                     </div>
                                 </form>
                             </div>
