@@ -1,6 +1,6 @@
 <nav class="navbar navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="index.php">CSK</a>
+        <a class="navbar-brand" href="index.php">Fulvian Cafe</a>
         <div class="d-flex align-items-center gap-2">
             <?php if (is_signin()):?>
             <span class="text-white small">

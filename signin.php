@@ -1,7 +1,8 @@
 <?php
 // signin.php
-session_start();
 include 'config.php';
+include 'auth.php';
+include 'header.php';
 
 $error = "";
 
@@ -32,47 +33,35 @@ if (isset($_POST['signin'])) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Sign In</title>
-        <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-    </head>
-
-    <body class="bg-light">
-        <div class="container">
-            <div class="row justify-content-center" style="margin-top: 15vh;">
-                <div class="col-md-4">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-dark text-white text-center">
-                            <h5 class="mb-0">Sign In</h5>
-                        </div>
-                        <div class="card-body">
-                            <?php if ($error): ?>
-                            <div class="alert alert-danger py-2"><?= $error ?></div>
-                                <?php endif; ?>
-                                <form method="POST" action="">
-                                    <div class="mb-3">
-                                        <label for="username" class="formlabel">Username</label>
-                                        <input type="text" class="form-control" id="username" name="username" required autofocus>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="password" class="formlabel">Password</label>
-                                        <input type="password" class="form-control" id="password" name="password" required>
-                                    </div>
-                                    <div class="d-grid">
-                                        <button type="submit" name="signin" class="btn btndark">Sign In</button>
-                                    </div>
-                                </form>
+<div class="container">
+    <div class="row justify-content-center" style="margin-top: 15vh;">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white text-center">
+                    <h5 class="mb-0">Sign In</h5>
+                </div>
+                <div class="card-body">
+                    <?php if ($error): ?>
+                    <div class="alert alert-danger py-2"><?= $error ?></div>
+                        <?php endif; ?>
+                        <form method="POST" action="">
+                            <div class="mb-3">
+                                <label for="username" class="formlabel">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required autofocus>
                             </div>
-                        </div>
+                            <div class="mb-4">
+                                <label for="password" class="formlabel">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" name="signin" class="btn btndark">Sign In</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
-</html>
+    </div>
+</div>
+
+<?php include 'footer.php' ?>
