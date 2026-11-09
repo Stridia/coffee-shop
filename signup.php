@@ -1,5 +1,6 @@
 <?php
 // signup.php
+$currPage = 'signup';
 include 'config.php';
 include 'auth.php';
 include 'header.php';
@@ -33,44 +34,57 @@ if (isset($_POST['signup'])) {
         header("Location: index.php");
         exit;
     } else {
-        $error = "Username taken";
+        $error = "Username taken. Please try another username.";
     }
 }
 ?>
 
-<div class="container">
-    <div class="row justify-content-center" style="margin-top: 15vh;">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white text-center">
-                    <h5 class="mb-0">Sign Up</h5>
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="card shadow-lg border-0 rounded-4" style="max-width: 400px; width: 100%;">
+        <div class="card-body p-5">
+            <a href="index.php" class="text-decoration-none text-muted mb-4 d-inline-block fw-semibold">&lt;-- Back</a>
+            
+            <div class="text-center mb-4">
+                <h3 class="fw-bold">Create Account</h3>
+                <p class="text-black small">Join us to start ordering</p>
+            </div>
+            
+            <?php if ($error): ?>
+                <div id="error-alert" class="alert alert-danger py-2 rounded-3 small"><?= $error ?></div>
+            <?php endif; ?>
+            
+            <form method="POST" action="">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control rounded-3" id="username" name="username" placeholder="Username" required autofocus>
+                    <label for="username">Username</label>
                 </div>
-                <div class="card-body">
-                    <?php if ($error): ?>
-                    <div class="alert alert-danger py-2"><?= $error ?></div>
-                        <?php endif; ?>
-                        <form method="POST" action="">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required autofocus>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="username" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required autofocus>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" name="signup" class="btn btndark">Sign Up</button>
-                            </div>
-                        </form>
-                    </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control rounded-3" id="email" name="email" placeholder="name@example.com" required>
+                    <label for="email">Email address</label>
                 </div>
+                <div class="form-floating mb-4">
+                    <input type="password" class="form-control rounded-3" id="password" name="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+                <button type="submit" name="signup" class="btn btn-dark w-100 py-2 rounded-3 fw-bold">Sign Up</button>
+            </form>
+            
+            <div class="text-center mt-4">
+                <p class="small text-black mb-0">Already have an account? <a href="signin.php" class="text-decoration-none fw-semibold">Sign In</a></p>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    setTimeout(function() {
+        const alertBox = document.getElementById('error-alert');
+        if (alertBox) {
+            alertBox.style.transition = "opacity 0.5s ease";
+            alertBox.style.opacity = "0";
+            setTimeout(() => alertBox.remove(), 500); 
+        }
+    }, 5000); // 5 seconds
+</script>
 
 <?php include 'footer.php' ?>
