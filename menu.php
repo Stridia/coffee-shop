@@ -1,5 +1,6 @@
 <?php
 // menu.php
+$currPage = 'menu';
 include 'config.php';
 include 'auth.php';
 include 'header.php';

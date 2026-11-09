@@ -1,5 +1,6 @@
 <?php
 // index.php
+$currPage = 'home';
 include 'config.php';
 include 'auth.php';
 include 'header.php';
@@ -19,10 +20,10 @@ include 'navbar.php';
         <div class="card-body">
             <h5>
                 <?php 
-                    if (is_customer()) {
+                    if (is_signin()) {
                         $username = get_username();
-                        echo "Welcome back, $username!";
-                    } else echo "Good evening, dear customer!";
+                        echo "<i>Welcome back,</i> $username!";
+                    } else echo "<i>Good evening, dear customer!</i>";
                 ?>
             </h5>
             <h1 class="mb-0">Fulvian Cafe</h1><br>

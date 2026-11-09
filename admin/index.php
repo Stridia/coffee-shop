@@ -1,5 +1,6 @@
 <?php
 // admin/index.php
+$currPage = 'admin_home';
 include '../config.php';
 include '../auth.php';
 
@@ -67,4 +68,4 @@ $result = mysqli_query($conn,
     </div>
 </div>
 
-<?php include 'footer.php' ?>
+<?php include '../footer.php' ?>
