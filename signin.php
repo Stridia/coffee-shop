@@ -9,7 +9,11 @@ if (isset($_POST['signin'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $stmt = mysqli_prepare($conn, "SELECT id, username, password, role FROM users WHERE username = ?");
+    $stmt = mysqli_prepare($conn, 
+            "SELECT u.id, u.username, u.password, r.name AS role 
+             FROM users u 
+             JOIN roles r ON r.id = u.role_id
+             WHERE u.username = ?");
     mysqli_stmt_bind_param($stmt, "s", $username);
     mysqli_stmt_execute($stmt);
     $user = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
