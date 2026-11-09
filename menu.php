@@ -4,9 +4,10 @@ include 'config.php';
 include 'auth.php';
 include 'navbar.php';
 
-$query = "SELECT * FROM menu";
-
-$result = mysqli_query($conn, "$query");
+$result = mysqli_query($conn, 
+          "SELECT p.id, p.name, p.description, p.image, p.price, p.status, t.name AS type 
+           FROM products p
+           JOIN types t ON t.id = p.type_id");
 ?>
 
 <!DOCTYPE html>
