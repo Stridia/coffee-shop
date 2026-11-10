@@ -52,6 +52,20 @@ CREATE TABLE products (
         REFERENCES types (id)
 );
 
+-- Table: reviews
+CREATE TABLE reviews (
+    id INT NOT NULL AUTO_INCREMENT,
+    product_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating TINYINT NOT NULL,
+    comment VARCHAR(255),
+    CONSTRAINT reviews_pk PRIMARY KEY (id),
+    CONSTRAINT reviews_products_fk FOREIGN KEY (product_id) 
+        REFERENCES products (id),
+    CONSTRAINT reviews_users_fk FOREIGN KEY (user_id) 
+        REFERENCES users (id)
+);
+
 -- Table: carts
 CREATE TABLE carts (
     user_id int  NOT NULL,
@@ -67,14 +81,19 @@ CREATE TABLE carts (
 -- Table: orders
 CREATE TABLE orders (
     id int  NOT NULL AUTO_INCREMENT,
+    order_code VARCHAR(30) NOT NULL UNIQUE,
     user_id int  NOT NULL,
     order_date datetime  NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    total_items int  NOT NULL,
-    total_price int  NOT NULL,
-    status ENUM('processing', 'delayed', 'ready', 'cancelled', 'completed') 
-        NOT NULL DEFAULT 'processing',
+    customer_name VARCHAR(100) NOT NULL,
+    cashier_id INT NULL,
+    subtotal INT NOT NULL,
+    discount INT NOT NULL DEFAULT 0,
+    total INT NOT NULL,
+    status ENUM('pending', 'paid', 'done') NOT NULL DEFAULT 'pending',
     CONSTRAINT orders_pk PRIMARY KEY (id),
     CONSTRAINT orders_users_fk FOREIGN KEY (user_id)
+        REFERENCES users (id),
+    CONSTRAINT orders_cashier_fk FOREIGN KEY (cashier_id)
         REFERENCES users (id)
 );
 
@@ -84,7 +103,8 @@ CREATE TABLE order_details (
     order_id int  NOT NULL,
     product_id int  NOT NULL,
     quantity int  NOT NULL,
-    items_price int  NOT NULL,
+    product_name VARCHAR(100) NOT NULL,
+    unit_price INT NOT NULL,
     CONSTRAINT order_details_pk PRIMARY KEY (id),
     CONSTRAINT order_details_orders_fk FOREIGN KEY (order_id)
         REFERENCES orders (id) ON DELETE CASCADE,
