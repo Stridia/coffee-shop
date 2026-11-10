@@ -2,73 +2,254 @@
 // menu.php
 $currPage = 'menu';
 include 'config.php';
-include 'auth.php';
+include 'helpers.php';
 include 'header.php';
 include 'navbar.php';
-
-$result = mysqli_query($conn, 
-          "SELECT p.id, p.name, p.description, p.image, p.price, p.status, t.name AS type 
-           FROM products p
-           JOIN types t ON t.id = p.type_id");
 ?>
 
-<div class="container mt-5">
-    <?php
-        if (isset($_GET['status'])) {
-            echo "
-            <div class='alert alert-success' role='alert'>
-                Pesanan diterima dengan harga $harga!
-            </div>";
-        } 
-    ?>
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">MENU CSK</h4>
+<div class="container my-4">
+    <!-- Member Discount / Promo Banner -->
+    <div id="promo-banner" class="alert alert-info shadow-sm mb-4" role="alert" style="display: none;"></div>
+
+    <div class="row g-4">
+        <!-- Products Column -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4 mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3 rounded-top-4">
+                    <h4 class="mb-0 fw-bold fs-5">Menu Kopipiro</h4>
+                    <div id="category-filters" class="d-flex flex-wrap gap-1">
+                        <!-- Category filter buttons loaded dynamically -->
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row g-3" id="product-grid">
+                        <!-- Products loaded dynamically via API -->
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover
-                align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="text-center">No</th>
-                            <th class="img-col text-center">Image</th>
-                            <th class="text-center">Type</th>
-                            <th class="desc-col text-center">Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $no = 1; while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td class="text-center"><?= $no++ ?></td>
-                            <td class="img-col text-center">
-                                <img src="<?= htmlspecialchars($row['image']) ?>" alt="htmlspecialchars($row['name'])" 
-                                class="img-menu"/>
-                                <br/><br/>
-                                <a href="" class="btn btn-outline-success btn-block btn-sm">Add to Cart</a>
-                            </td>
-                            <td class="text-center"><?= htmlspecialchars($row['type']) ?></td>
-                            <td class="desc-col">
-                                <b><?= htmlspecialchars($row['name']) ?></b>
-                                <br/>
-                                <?= htmlspecialchars($row['description']) ?>
-                                <br/><br/>
-                                
-                                <?php $price = $row['price']; 
-                                if (is_customer()) {
-                                    echo "<s>$price <br></s>";
-                                    $price = $price * 0.9;
-                                }
-                                echo "<b>$price</b>";
-                                ?>
-                            </td>
-                        </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
+
+        <!-- Cart & Checkout Sidebar Column -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 sticky-top" style="top: 80px;">
+                <div class="card-header bg-dark text-white py-3 rounded-top-4">
+                    <h5 class="mb-0 fw-bold fs-6">Order Cart</h5>
+                </div>
+                <div class="card-body p-4">
+                    <ul id="cart-list" class="list-group list-group-flush mb-3">
+                        <li class="list-group-item text-muted text-center py-3 border-0">Your cart is empty</li>
+                    </ul>
+
+                    <div class="d-flex justify-content-between align-items-center fw-bold fs-5 mb-3">
+                        <span>Total:</span>
+                        <span id="cart-total" class="text-primary">Rp 0</span>
+                    </div>
+
+                    <?php if (!is_signin()): ?>
+                    <div class="form-floating mb-3">
+                        <input type="text" id="guestName" class="form-control rounded-3" placeholder="Your Name">
+                        <label for="guestName">Customer Name (Guest)</label>
+                    </div>
+                    <?php endif; ?>
+
+                    <button id="btnCheckout" class="btn btn-primary w-100 py-2 rounded-3 fw-bold" onclick="handleCheckout()">Place Order</button>
+                    
+                    <div id="checkout-result"></div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<?php include 'footer.php' ?>
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rp = n => 'Rp ' + Number(n).toLocaleString('id-ID');
+
+let me = { role: 'guest' };
+let currentCategory = '';
+let cart = {};
+let knownProducts = {};
+
+async function api(url, opts = {}) {
+    const res = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opts });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Request failed');
+    return data;
+}
+
+async function initMenu() {
+    try {
+        me = await api('api/auth.php?action=me');
+        const promoBanner = document.getElementById('promo-banner');
+        promoBanner.style.display = 'block';
+        if (me.role === 'customer') {
+            promoBanner.className = 'alert alert-success shadow-sm mb-4';
+            promoBanner.innerHTML = '<strong>Member Discount Active!</strong> You receive 10% off on all items.';
+        } else {
+            promoBanner.className = 'alert alert-info shadow-sm mb-4';
+            promoBanner.innerHTML = '<strong>Guest Mode:</strong> Sign in as a customer to unlock a 10% member discount!';
+        }
+    } catch (e) {
+        console.warn('Session check failed', e);
+    }
+    await loadProducts();
+}
+
+async function loadProducts() {
+    const query = currentCategory ? '?category=' + encodeURIComponent(currentCategory) : '';
+    const data = await api('api/products.php' + query);
+    
+    knownProducts = {};
+    data.products.forEach(p => knownProducts[p.id] = p);
+
+    // Render Categories
+    const catContainer = document.getElementById('category-filters');
+    catContainer.innerHTML = `<button class="btn btn-sm ${currentCategory === '' ? 'btn-light fw-bold' : 'btn-outline-light'}" onclick="filterCategory('')">All</button>` +
+        data.categories.map(c => `
+            <button class="btn btn-sm ${currentCategory === c.name ? 'btn-light fw-bold' : 'btn-outline-light'}" onclick="filterCategory('${esc(c.name)}')">
+                ${esc(c.name)}
+            </button>
+        `).join('');
+
+    // Render Products Grid
+    const grid = document.getElementById('product-grid');
+    if (data.products.length === 0) {
+        grid.innerHTML = '<div class="col-12 text-center text-muted py-4">No products available in this category.</div>';
+        return;
+    }
+
+    grid.innerHTML = data.products.map(p => {
+        const isDiscounted = p.final_price < p.price;
+        const imgPath = p.image ? esc(p.image) : 'https://via.placeholder.com/300x200?text=No+Image';
+        return `
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="${imgPath}" class="card-img-top" style="height: 160px; object-fit: cover;" alt="${esc(p.name)}">
+                    <div class="card-body d-flex flex-column p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="fw-bold text-black mb-0">${esc(p.name)}</h6>
+                            <span class="badge bg-secondary small">${esc(p.category)}</span>
+                        </div>
+                        <p class="text-muted small mb-3 flex-grow-1" style="font-size: 0.85rem;">
+                            ${esc(p.description || '')}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <div>
+                                ${isDiscounted ? `<span class="text-muted text-decoration-line-through small me-1">${rp(p.price)}</span>` : ''}
+                                <span class="fw-bold text-primary">${rp(p.final_price)}</span>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm rounded-3 fw-semibold" onclick="addToCart(${p.id})">
+                                + Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function filterCategory(cat) {
+    currentCategory = cat;
+    loadProducts();
+}
+
+function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    renderCart();
+}
+
+function removeFromCart(id) {
+    if (cart[id]) {
+        delete cart[id];
+    }
+    renderCart();
+}
+
+function renderCart() {
+    const cartList = document.getElementById('cart-list');
+    const entries = Object.entries(cart);
+    let total = 0;
+
+    if (entries.length === 0) {
+        cartList.innerHTML = '<li class="list-group-item text-muted text-center py-3 border-0">Your cart is empty</li>';
+        document.getElementById('cart-total').textContent = 'Rp 0';
+        return;
+    }
+
+    cartList.innerHTML = entries.map(([id, qty]) => {
+        const p = knownProducts[id];
+        if (!p) return '';
+        const lineTotal = p.final_price * qty;
+        total += lineTotal;
+        return `
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2 border-bottom">
+                <div>
+                    <div class="fw-bold text-black small">${esc(p.name)}</div>
+                    <div class="text-muted small">${qty} x ${rp(p.final_price)}</div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold text-primary small">${rp(lineTotal)}</span>
+                    <button class="btn btn-sm btn-outline-danger py-0 px-2 rounded-circle" onclick="removeFromCart(${id})">&times;</button>
+                </div>
+            </li>
+        `;
+    }).join('');
+
+    document.getElementById('cart-total').textContent = rp(total);
+}
+
+async function handleCheckout() {
+    const items = Object.entries(cart).map(([id, qty]) => ({ product_id: +id, qty }));
+    if (items.length === 0) {
+        alert('Please add items to your cart before placing an order.');
+        return;
+    }
+
+    const guestInput = document.getElementById('guestName');
+    const customerName = guestInput ? guestInput.value : '';
+
+    try {
+        const res = await api('api/orders.php', {
+            method: 'POST',
+            body: JSON.stringify({ items, customer_name: customerName })
+        });
+        
+        cart = {};
+        renderCart();
+
+        document.getElementById('checkout-result').innerHTML = `
+            <div class="alert alert-success rounded-3 mt-3 mb-0 small">
+                <strong>Order Placed!</strong><br>
+                Code: <b>${esc(res.order_code)}</b><br>
+                Subtotal: ${rp(res.subtotal)}<br>
+                Discount: ${rp(res.discount)}<br>
+                Total: <b>${rp(res.total)}</b><br>
+                <button class="btn btn-success btn-sm w-100 mt-2 rounded-3 fw-bold" onclick="payOnline('${esc(res.order_code)}')">
+                    Pay Online (Sandbox)
+                </button>
+            </div>
+        `;
+    } catch (err) {
+        document.getElementById('checkout-result').innerHTML = `
+            <div class="alert alert-danger rounded-3 mt-3 mb-0 small">${esc(err.message)}</div>
+        `;
+    }
+}
+
+async function payOnline(orderCode) {
+    try {
+        const res = await api('api/pay.php', {
+            method: 'POST',
+            body: JSON.stringify({ order_code: orderCode })
+        });
+        window.location.href = res.redirect_url;
+    } catch (err) {
+        alert('Payment initialization failed: ' + err.message);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initMenu);
+</script>
+
+<?php include 'footer.php'; ?>

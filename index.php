@@ -2,7 +2,7 @@
 // index.php
 $currPage = 'home';
 include 'config.php';
-include 'auth.php';
+include 'helpers.php';
 include 'header.php';
 include 'navbar.php';
 ?>

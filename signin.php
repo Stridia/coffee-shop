@@ -2,7 +2,7 @@
 // signin.php
 $currPage = 'signin';
 include 'config.php';
-include 'auth.php';
+include 'helpers.php';
 include 'header.php';
 
 $error = "";
