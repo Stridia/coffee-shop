@@ -57,7 +57,7 @@ function is_admin() {
 }
 
 function is_staff() {
-    return $_SESSION['role'] === 'staff' || $_SESSION['role'] === 'owner';
+    return $_SESSION['role'] === 'cashier' || $_SESSION['role'] === 'owner';
 }
 
 function is_customer() {
