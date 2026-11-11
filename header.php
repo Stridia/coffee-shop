@@ -10,5 +10,5 @@ $pathPrefix = $isAdmin ? '../' : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fulvian Cafe</title>
     <link href="<?= $pathPrefix ?>style/bootstrap.min.css" rel="stylesheet" >
-    <link href="<?= $pathPrefix ?>style/style.css" rel="stylesheet">
+    <link href="<?= $pathPrefix ?>style/override.css" rel="stylesheet">
 <body class="bg-light">
