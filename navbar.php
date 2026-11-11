@@ -13,11 +13,18 @@
           <a class="nav-link <?= (isset($currPage) && $currPage == 'menu') ? 'active' : '' ?>" href="menu.php">Menu</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= (isset($currPage) && $currPage == 'cart') ? 'active' : '' ?>" href="#">Your Cart</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link <?= (isset($currPage) && $currPage == 'order_history') ? 'active' : '' ?>"" href="#">Order History</a>
         </li>
+        <?php if (is_staff()):?>
+        <li class="nav-item">
+          <a class="nav-link <?= (isset($currPage) && $currPage == 'staff_dashboard') ? 'active' : '' ?>"" href="staff_dashboard.php">Staff Dashboard</a>
+        </li>
+        <?php endif; ?>
+        <?php if (is_admin()):?>
+        <li class="nav-item">
+          <a class="nav-link <?= (isset($currPage) && $currPage == 'menu_management') ? 'active' : '' ?>"" href="menu_management.php">Menu Management</a>
+        </li>
+        <?php endif; ?>
       </ul>
       
       <!-- Profile Dropdown / Sign In Button -->
