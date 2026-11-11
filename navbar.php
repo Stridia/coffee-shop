@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
   <div class="container">
-    <a class="navbar-brand" href="#">Fulvian Cafe</a>
+    <a class="navbar-brand" href="#">Kopipiro</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -13,7 +13,7 @@
           <a class="nav-link <?= (isset($currPage) && $currPage == 'menu') ? 'active' : '' ?>" href="menu.php">Menu</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link <?= (isset($currPage) && $currPage == 'order_history') ? 'active' : '' ?>"" href="#">Order History</a>
+          <a class="nav-link <?= (isset($currPage) && $currPage == 'order_history') ? 'active' : '' ?>"" href="order_history.php">Order History</a>
         </li>
         <?php if (is_staff()):?>
         <li class="nav-item">

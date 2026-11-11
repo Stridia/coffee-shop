@@ -15,7 +15,7 @@ $categories = $stmt->fetchAll();
 <div class="bg-blur-overlay"></div>
 
 <div class="container my-5 text-center py-4">
-    <h1 class="display-5 fw-bold text-black mb-3">Welcome to Fulvian Cafe</h1>
+    <h1 class="display-5 fw-bold text-black mb-3">Welcome to <i class="text-primary">Kopipiro Coffee Shop!</i></h1>
     <p class="lead text-muted mx-auto" style="max-width: 600px;">
         Discover our artisanal coffee blends, refreshing non-coffee beverages, and freshly toasted bites.
     </p>
