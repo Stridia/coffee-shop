@@ -12,16 +12,26 @@ switch ($_SERVER['REQUEST_METHOD']) {
                        COUNT(r.id) AS reviews
                 FROM products p
                 JOIN types t ON t.id = p.type_id
-                LEFT JOIN reviews r ON r.product_id = p.id
-                WHERE p.status = 'available'";
+                LEFT JOIN reviews r ON r.product_id = p.id";
         $args = [];
+        $where = [];
+
+        // Staff and Admins can view all items (including unavailable); customers only see available items
+        $isStaff = $user && in_array($user['role'], ['owner', 'admin'], true);
+        if (!$isStaff) {
+            $where[] = "p.status = 'available'";
+        }
 
         if (!empty($_GET['category'])) {
-            $sql .= " AND t.name = ?";
+            $where[] = "t.name = ?";
             $args[] = $_GET['category'];
         }
 
-        $sql .= " GROUP BY p.id, t.name ORDER BY t.id, p.name";
+        if ($where) {
+            $sql .= " WHERE " . implode(' AND ', $where);
+        }
+
+        $sql .= " GROUP BY p.id, p.name, p.description, p.price, p.image, p.status, t.id, t.name ORDER BY t.id, p.name";
         $st = $pdo->prepare($sql);
         $st->execute($args);
         $rows = $st->fetchAll();
@@ -36,55 +46,56 @@ switch ($_SERVER['REQUEST_METHOD']) {
             'categories' => $pdo->query("SELECT id, name FROM types ORDER BY id")->fetchAll(),
             'products' => $rows
         ]);
+        break;
 
     case 'POST':
-        need_role(['owner']);
-        $name = trim($_POST['name'] ?? '');
-        $type_id = (int) ($_POST['type_id'] ?? $_POST['category_id'] ?? 0);
-        $cafe_id = (int) ($_POST['cafe_id'] ?? 1);
-        $price = (int) ($_POST['price'] ?? 0);
+        need_role(['owner', 'admin']);
+        $in = body();
+        $name = trim($in['name'] ?? '');
+        $type_id = (int) ($in['type_id'] ?? 0);
+        $cafe_id = (int) ($in['cafe_id'] ?? 1);
+        $price = (int) ($in['price'] ?? 0);
+        $image = trim($in['image'] ?? '');
+        $desc = trim($in['description'] ?? '');
+        $status = trim($in['status'] ?? 'available');
 
         if ($name === '' || $type_id < 1 || $price < 1) {
-            out(['message' => 'Name, type_id, and price are required'], 400);
-        }
-
-        $file = '';
-        if (!empty($_FILES['image']['name'])) {
-            $f = $_FILES['image'];
-            if ($f['error'] !== UPLOAD_ERR_OK || $f['size'] > 2 * 1024 * 1024) {
-                out(['message' => 'Image upload failed or exceeds 2MB limit'], 400);
-            }
-            $mime = (new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']);
-            $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
-            $ext = $allowed[$mime] ?? null;
-            if (!$ext) out(['message' => 'Only JPG, PNG or WebP images are allowed'], 400);
-
-            $file = bin2hex(random_bytes(8)) . '.' . $ext;
-            if (!is_dir(__DIR__ . '/../uploads')) {
-                mkdir(__DIR__ . '/../uploads', 0777, true);
-            }
-            move_uploaded_file($f['tmp_name'], __DIR__ . '/../uploads/' . $file);
+            out(['message' => 'Name, category, and price are required'], 400);
         }
 
         $st = $pdo->prepare("INSERT INTO products (cafe_id, type_id, name, description, image, price, status) 
-                             VALUES (?, ?, ?, ?, ?, ?, 'available')");
-        $st->execute([$cafe_id, $type_id, $name, trim($_POST['description'] ?? ''), $file, $price]);
+                             VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $st->execute([$cafe_id, $type_id, $name, $desc, $image, $price, $status]);
 
         out(['message' => 'Product created', 'id' => (int) $pdo->lastInsertId()], 201);
+        break;
 
     case 'PUT':
-        need_role(['owner']);
+        need_role(['owner', 'admin']);
         $id = (int) ($_GET['id'] ?? 0);
-        $price = (int) (body()['price'] ?? 0);
-        $status = body()['status'] ?? 'available';
+        $in = body();
 
         if ($id < 1) out(['message' => 'Product ID is required'], 400);
 
-        $st = $pdo->prepare("UPDATE products SET price = ?, status = ? WHERE id = ?");
-        $st->execute([$price, $status, $id]);
+        $fields = [];
+        $params = [];
 
-        if ($st->rowCount() === 0) out(['message' => 'Product not found or unchanged'], 404);
+        if (array_key_exists('name', $in)) { $fields[] = 'name = ?'; $params[] = trim($in['name']); }
+        if (array_key_exists('type_id', $in)) { $fields[] = 'type_id = ?'; $params[] = (int) $in['type_id']; }
+        if (array_key_exists('price', $in)) { $fields[] = 'price = ?'; $params[] = (int) $in['price']; }
+        if (array_key_exists('status', $in)) { $fields[] = 'status = ?'; $params[] = trim($in['status']); }
+        if (array_key_exists('description', $in)) { $fields[] = 'description = ?'; $params[] = trim($in['description']); }
+        if (array_key_exists('image', $in)) { $fields[] = 'image = ?'; $params[] = trim($in['image']); }
+
+        if (!$fields) out(['message' => 'No fields to update'], 400);
+
+        $params[] = $id;
+        $sql = "UPDATE products SET " . implode(', ', $fields) . " WHERE id = ?";
+        $st = $pdo->prepare($sql);
+        $st->execute($params);
+
         out(['message' => 'Product updated successfully']);
+        break;
 
     default:
         out(['message' => 'Method not allowed'], 405);
