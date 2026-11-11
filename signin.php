@@ -34,35 +34,6 @@ if (isset($_POST['signin'])) {
 }
 ?>
 
-<style>
-    body {
-        background: url('https://static.vecteezy.com/system/resources/thumbnails/007/100/608/small/abstract-geometric-white-and-gray-on-light-silver-gradient-background-modern-banner-design-illustration-free-vector.jpg') no-repeat center center fixed;
-        background-size: cover;
-    }
-    
-    .bg-blur-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        background-color: rgba(255, 255, 255, 0.1); 
-        z-index: -1;
-    }
-
-    .glass-card {
-        background: rgba(255, 255, 255, 0.65) !important;
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.8) !important;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2) !important;
-    }
-
-    .glass-card .form-control {
-        background: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.9);
-    }
-</style>
-
 <div class="bg-blur-overlay"></div>
 
 <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
