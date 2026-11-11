@@ -11,22 +11,25 @@ include 'header.php';
 include 'navbar.php';
 ?>
 
-<div class="container my-4">
-    <!-- Page Header & Category Filter Buttons -->
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-        <div>
-            <h2 class="fw-bold text-black mb-1">Menu Management</h2>
-            <p class="text-muted small mb-0">Kelola, tambah, edit, dan hapus menu produk cafe</p>
-        </div>
-        
-        <div id="category-filters" class="d-flex flex-wrap gap-2">
-            <!-- Category filter buttons loaded dynamically -->
-        </div>
-    </div>
+<div class="bg-blur-overlay"></div>
 
+<div class="container my-4">
     <div class="row g-4">
-        <!-- Left Column: Products Grid -->
+        <!-- Left Column: Products Grid & Header -->
         <div class="col-lg-8">
+            <!-- Header & Category Filter Buttons -->
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <div>
+                    <h2 class="fw-bold text-black mb-1">Menu Management</h2>
+                    <p class="text-muted small mb-0">Kelola, tambah, edit, dan hapus menu produk cafe</p>
+                </div>
+                
+                <div id="category-filters" class="d-flex flex-wrap gap-2">
+                    <!-- Category filter buttons loaded dynamically -->
+                </div>
+            </div>
+            <hr class="mt-0 mb-4 text-primary opacity-75 fw-bold">
+
             <div id="product-grid">
                 <!-- Dynamic Category Headings, Dividers, and Cards -->
             </div>

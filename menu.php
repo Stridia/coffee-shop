@@ -17,12 +17,13 @@ include 'navbar.php';
         <!-- Products Column -->
         <div class="col-lg-8">
             <!-- Clean Header & Category Filter Buttons -->
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <h2 class="fw-bold text-black mb-0">Menu Kopipiro</h2>
                 <div id="category-filters" class="d-flex flex-wrap gap-2">
                     <!-- Category filter buttons loaded dynamically -->
                 </div>
             </div>
+            <hr class="mt-0 mb-4 text-primary opacity-75 fw-bold">
 
             <!-- Grouped Category Sections with Menu Item Cards -->
             <div id="product-grid">
@@ -277,4 +278,4 @@ async function payOnline(orderCode) {
 document.addEventListener('DOMContentLoaded', initMenu);
 </script>
 
-<?php include 'footer.php'; ?>x
+<?php include 'footer.php'; ?>
