@@ -87,6 +87,29 @@ switch ($_SERVER['REQUEST_METHOD']) {
         out(['message' => 'Product updated successfully']);
         break;
 
+    case 'DELETE':
+        need_role(['owner', 'admin']);
+        $id = (int) ($_GET['id'] ?? 0);
+
+        if ($id < 1) out(['message' => 'Product ID is required'], 400);
+
+        try {
+            $st = $pdo->prepare("DELETE FROM products WHERE id = ?");
+            $st->execute([$id]);
+
+            if ($st->rowCount() === 0) {
+                out(['message' => 'Product not found'], 404);
+            }
+
+            out(['message' => 'Product deleted permanently']);
+        } catch (PDOException $e) {
+            if ($e->getCode() === '23000') {
+                out(['message' => 'Cannot delete this item because it is linked to existing order history. Edit its status to unavailable instead.'], 409);
+            }
+            throw $e;
+        }
+        break;
+
     default:
         out(['message' => 'Method not allowed'], 405);
 }

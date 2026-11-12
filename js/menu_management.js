@@ -245,10 +245,12 @@ document.getElementById('btn-confirm-delete').onclick = async function () {
 
     try {
         await api(`api/products.php?id=${targetDeleteId}`, {
-            method: 'PUT',
-            body: JSON.stringify({ status: 'unavailable', price: knownProducts[targetDeleteId].price })
+            method: 'DELETE'
         });
 
+        if (document.getElementById('product-id').value == targetDeleteId) {
+            resetForm();
+        }
         if (deleteModalInstance) deleteModalInstance.hide();
         targetDeleteId = null;
         await loadProducts();
