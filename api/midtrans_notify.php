@@ -6,7 +6,7 @@ $n = body();
 
 $expected = hash('sha512',
     ($n['order_id'] ?? '') . ($n['status_code'] ?? '') .
-    ($n['gross_amount'] ?? '') . MIDTRANS_SERVER_KEY
+    ($n['gross_amount'] ?? '') . MIDTRANS_SIGNATURE_KEY
 );
 
 if (!hash_equals($expected, $n['signature_key'] ?? '')) {

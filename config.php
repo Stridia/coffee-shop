@@ -24,4 +24,5 @@ try {
 }
 
 const DISCOUNT_RATE = 0.10; // 10% discount for customer role
-const MIDTRANS_SERVER_KEY = 'PASTE-YOUR-SANDBOX-SERVER-KEY';
+const MIDTRANS_SERVER_KEY = 'SB-Mid-server-cch7sd.yD5Y1JWzGf0B5UD2-';       // Server Key for api/pay.php
+const MIDTRANS_SIGNATURE_KEY = 'SB-Mid-server-bnvB~O.CQUCTGOOtaMSJXvqc';    // Signature Secret Key for api/midtrans_notify.php
