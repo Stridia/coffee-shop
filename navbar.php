@@ -12,9 +12,11 @@
         <li class="nav-item">
           <a class="nav-link <?= (isset($currPage) && $currPage == 'menu') ? 'active' : '' ?>" href="menu.php">Menu</a>
         </li>
+        <?php if (is_signin()):?>
         <li class="nav-item">
           <a class="nav-link <?= (isset($currPage) && $currPage == 'order_history') ? 'active' : '' ?>"" href="order_history.php">Order History</a>
         </li>
+        <?php endif; ?>
         <?php if (is_staff()):?>
         <li class="nav-item">
           <a class="nav-link <?= (isset($currPage) && $currPage == 'staff_dashboard') ? 'active' : '' ?>"" href="staff_dashboard.php">Staff Dashboard</a>
