@@ -14,21 +14,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 JOIN types t ON t.id = p.type_id
                 LEFT JOIN reviews r ON r.product_id = p.id";
         $args = [];
-        $where = [];
-
-        // Staff and Admins can view all items (including unavailable); customers only see available items
-        $isStaff = $user && in_array($user['role'], ['owner', 'admin'], true);
-        if (!$isStaff) {
-            $where[] = "p.status = 'available'";
-        }
 
         if (!empty($_GET['category'])) {
-            $where[] = "t.name = ?";
+            $sql .= " WHERE t.name = ?";
             $args[] = $_GET['category'];
-        }
-
-        if ($where) {
-            $sql .= " WHERE " . implode(' AND ', $where);
         }
 
         $sql .= " GROUP BY p.id, p.name, p.description, p.price, p.image, p.status, t.id, t.name ORDER BY t.id, p.name";
@@ -36,9 +25,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $st->execute($args);
         $rows = $st->fetchAll();
 
+        $safeUser = is_array($user) ? $user : ['role' => 'guest'];
         foreach ($rows as &$r) {
             $r['price'] = (int) $r['price'];
-            $r['final_price'] = final_price($r['price'], $user);
+            $r['final_price'] = final_price($r['price'], $safeUser);
             $r['image'] = image_url($r['image']);
         }
 

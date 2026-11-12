@@ -14,6 +14,15 @@ async function api(url, opts = {}) {
     return data;
 }
 
+async function initMenu() {
+    try {
+        me = await api('api/auth.php?action=me');
+    } catch (e) {
+        console.warn('Session check failed', e);
+    }
+    await loadProducts();
+}
+
 async function loadProducts() {
     const query = currentCategory ? '?category=' + encodeURIComponent(currentCategory) : '';
     const data = await api('api/products.php' + query);
