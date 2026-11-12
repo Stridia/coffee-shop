@@ -14,24 +14,6 @@ async function api(url, opts = {}) {
     return data;
 }
 
-async function initMenu() {
-    try {
-        me = await api('api/auth.php?action=me');
-        const promoBanner = document.getElementById('promo-banner');
-        promoBanner.style.display = 'block';
-        if (me.role === 'customer') {
-            promoBanner.className = 'alert alert-success shadow-sm mb-4';
-            promoBanner.innerHTML = '<strong>Member Discount Active!</strong> You receive 10% off on all items.';
-        } else {
-            promoBanner.className = 'alert alert-info shadow-sm mb-4';
-            promoBanner.innerHTML = '<strong>Guest Mode:</strong> Sign in as a customer to unlock a 10% member discount!';
-        }
-    } catch (e) {
-        console.warn('Session check failed', e);
-    }
-    await loadProducts();
-}
-
 async function loadProducts() {
     const query = currentCategory ? '?category=' + encodeURIComponent(currentCategory) : '';
     const data = await api('api/products.php' + query);

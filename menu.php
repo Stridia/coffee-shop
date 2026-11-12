@@ -10,15 +10,15 @@ include 'navbar.php';
 <div class="bg-blur-overlay"></div>
 
 <div class="container my-4">
-    <!-- Member Discount / Promo Banner -->
-    <div id="promo-banner" class="alert alert-info shadow-sm mb-4" role="alert" style="display: none;"></div>
-
     <div class="row g-4">
         <!-- Products Column -->
         <div class="col-lg-8">
             <!-- Clean Header & Category Filter Buttons -->
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                <h2 class="fw-bold text-black mb-0">Menu Kopipiro</h2>
+                <div>
+                    <h2 class="fw-bold text-black mb-1">Menu Kopipiro</h2>
+                    <p class="text-muted small mb-0">Please explore our menus and order your favorites!</p>
+                </div>
                 <div id="category-filters" class="d-flex flex-wrap gap-2">
                     <!-- Category filter buttons loaded dynamically -->
                 </div>
